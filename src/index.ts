@@ -1,6 +1,6 @@
 import express from "express"
-import env from "./config/env.config.js"
-import apiRoute from "./routes/api.route.js"
+import env from "@/config/env.config.js"
+import apiRoute from "@/routes/api.route.js"
 
 //
 

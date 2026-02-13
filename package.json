@@ -6,8 +6,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "tsx --env-file .env src/index.ts",
-		"start": "node --env-file .env dist/src/index.js",
-		"build": "tsc",
+		"start": "node --env-file .env dist/index.js",
+		"build": "tsc && tsc-alias",
 		"format": "prettier --write ."
 	},
 	"keywords": [],
@@ -23,6 +23,7 @@
 		"@types/multer": "^2.0.0",
 		"@types/node": "^25.2.3",
 		"prettier": "^3.8.1",
+		"tsc-alias": "^1.8.16",
 		"tsx": "^4.21.0",
 		"typescript": "^5.9.3"
 	}

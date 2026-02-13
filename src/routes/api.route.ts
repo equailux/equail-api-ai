@@ -1,5 +1,5 @@
 import express from "express"
-import eggRoute from "src/routes/egg.route.js"
+import eggRoute from "@/routes/egg.route.js"
 
 //
 

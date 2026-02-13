@@ -1,6 +1,6 @@
 import express from "express"
-import eggController from "src/controllers/egg.controller.js"
-import uploadMiddleware from "src/middlewares/upload.middleware.js"
+import eggController from "@/controllers/egg.controller.js"
+import uploadMiddleware from "@/middlewares/upload.middleware.js"
 
 //
 
