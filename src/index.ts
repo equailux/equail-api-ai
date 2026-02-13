@@ -1,14 +1,12 @@
 import express from "express"
-import http from "http"
 import env from "./config/env.config.js"
+import apiRoute from "./routes/api.route.js"
 
 //
 
 const api = express()
 
-//
+api.get("/", (_, res) => res.send("I am ai api only."))
+api.use("/api", apiRoute.router)
 
-api.get("/", (_, res) => res.send("I am api only."))
-
-const server = http.createServer(api)
-server.listen(env.port, env.host, () => console.log(`AI api active on ${env.protocol}://${env.host}:${env.port}.`))
+api.listen(env.port, env.host, () => console.log(`AI api active on ${env.protocol}://${env.host}:${env.port}.`))
