@@ -1,10 +1,17 @@
 import express from "express"
 import env from "@/config/env.config.js"
 import apiRoute from "@/routes/api.route.js"
+import eggBoot from "@/boot/egg.boot.js"
 
 //
 
 const api = express()
+
+//
+
+await eggBoot.boot()
+
+//
 
 api.get("/", (_, res) => res.send("I am ai api only."))
 api.use("/api", apiRoute.router)
