@@ -7,8 +7,8 @@ let model: tf.GraphModel | undefined = undefined
 
 //
 
-const load = async (imageSize = 256) => {
-    size = imageSize
+const load = async (imgsz = 256) => {
+    size = imgsz
     await tf.ready()
     model = await tf.loadGraphModel(`file://${process.cwd()}/models/egg/model.json`)
     return model

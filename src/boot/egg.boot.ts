@@ -5,7 +5,7 @@ import eggModule from "@/modules/egg.module.js"
 
 const boot = async () => {
     let timer = Date.now()
-    await eggModule.load(env.egg.size)
+    await eggModule.load(env.egg.imgsz)
     console.info(`[Boot.Egg]: Egg detection model loaded in ${Date.now() - timer}ms.`)
     
     timer = Date.now()

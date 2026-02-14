@@ -6,7 +6,7 @@ const env = {
 	host: process.env.HOST || "",
 	protocol: process.env.PROTOCOL || "",
 	apikey: process.env.API_KEY || "",
-	egg: { size: Number(process.env.EGG_SIZE) },
+	egg: { imgsz: Number(process.env.IMGSZ) },
 }
 
 //
