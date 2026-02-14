@@ -20,16 +20,16 @@ const warmup = async () => {
 }
 
 /** Runs preprocessing, prediction, and postprocessing to get bboxes. */
-const predict = async (img: any, threshold = 0.5) => {
+const predict = async (img: any, minIoU = 0.5, minScore = 0.4, maxBoxCount = 100) => {
     if (!model) return
 
-    const prediction: any = tf.tidy(() => {
+    const prediction = tf.tidy(() => {
         const imgTensor = preprocess(img);
         const raw = model!.execute(imgTensor, "Identity")
         return Array.isArray(raw) ? raw[0] : raw
     })
 
-    const bboxes = await postprocess(prediction, 0.5, threshold);
+    const bboxes = await postprocess(prediction, minIoU, minScore, maxBoxCount);
     tf.dispose(prediction)
     return bboxes;
 }
@@ -45,16 +45,16 @@ const preprocess = (img: Buffer) => {
     );
 }
 
-/** YOLOv26n has prediction vector of [cx, cy, w, h, classes]. */
+/** YOLOv26n has prediction vector of [x1, y1, x2, y2, classes]. */
 const extract = (vector: any) => {
     return tf.tidy(() => {
-        const cx = vector.slice([0, 0], [-1, 1]).squeeze();
-        const cy = vector.slice([0, 1], [-1, 1]).squeeze();
-        const w = vector.slice([0, 2], [-1, 1]).squeeze();
-        const h = vector.slice([0, 3], [-1, 1]).squeeze();
+        const x1 = vector.slice([0, 0], [-1, 1]).squeeze();
+        const y1 = vector.slice([0, 1], [-1, 1]).squeeze();
+        const x2 = vector.slice([0, 2], [-1, 1]).squeeze();
+        const y2 = vector.slice([0, 3], [-1, 1]).squeeze();
 
         const objectness = vector.slice([0, 4], [-1, 1]).squeeze();
-        return [cx, cy, w, h, objectness];
+        return [x1, y1, x2, y2, objectness];
     })
 }
 
@@ -95,31 +95,16 @@ const classify = (nmsi: any, boxes: any, scores: any) => {
     return result;
 }
 
-/** Convert a box to x1, y1, x2, y2. */
-const corners = (cx: any, cy: any, w: any, h: any) => {
-    return tf.tidy(() => {
-        const two = tf.scalar(2);
-        const [halfW, halfH] = [w.div(two), h.div(two)];
-
-        const x1 = cx.sub(halfW);
-        const y1 = cy.sub(halfH);
-        const x2 = cx.add(halfW);
-        const y2 = cy.add(halfH);
-
-        return [x1, y1, x2, y2];
-    })
-}
-
 /** Combines all processing steps into usable result. */
 const postprocess = async (prediction: any, minIoU = 0.5, minScore = 0.4, maxBoxCount = 100) => {
     const [boxes, cornerBoxes, objectness] = tf.tidy(() => {
         const raw = prediction.squeeze(0);
 
-        const [cx, cy, w, h, objectness] = extract(raw);
-        const [x1, y1, x2, y2] = corners(cx, cy, w, h);
+        const [x1, y1, x2, y2, objectness] = extract(raw);
+        const [w, h] = [x2.sub(x1), y2.sub(y1)]
 
         const boxes = tf.stack([x1, y1, w, h], 1);
-        const cornerBoxes = tf.stack([x1, y1, x2, y2], 1);
+        const cornerBoxes = tf.stack([y1, x1, y2, x2], 1);
 
         return [boxes, cornerBoxes, objectness];
     })
