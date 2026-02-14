@@ -2,11 +2,13 @@ import * as tf from "@tensorflow/tfjs-node"
 
 //
 
+let size = 256
 let model: tf.GraphModel | undefined = undefined
 
 //
 
-const load = async () => {
+const load = async (imageSize = 256) => {
+    size = imageSize
     await tf.ready()
     model = await tf.loadGraphModel(`file://${process.cwd()}/models/egg/model.json`)
     return model
@@ -14,7 +16,7 @@ const load = async () => {
 
 const warmup = async () => {
     if (!model) return
-    const dummy = tf.tidy(() => tf.zeros([1, 640, 640, 3], "float32"))
+    const dummy = tf.tidy(() => tf.zeros([1, size, size, 3], "float32"))
     const result = tf.tidy(() => model!.execute(dummy, "Identity"))
     tf.dispose([dummy, result])
 }
@@ -40,7 +42,7 @@ const preprocess = (img: Buffer) => {
         tf.node.decodeImage(img, 3)
             .toFloat()
             .div(255.0)
-            .resizeBilinear([640, 640])
+            .resizeBilinear([size, size])
             .expandDims(0)
     );
 }
@@ -81,10 +83,10 @@ const classify = (nmsi: any, boxes: any, scores: any) => {
 
     for (const i of nmsi) {
         const box = {
-            x: boxes[i][0] / 640,
-            y: boxes[i][1] / 640,
-            w: boxes[i][2] / 640,
-            h: boxes[i][3] / 640,
+            x: boxes[i][0] / size,
+            y: boxes[i][1] / size,
+            w: boxes[i][2] / size,
+            h: boxes[i][3] / size,
         };
 
         const label = "egg";
