@@ -3,6 +3,7 @@ import cors from "cors"
 import env from "@/config/env.config.js"
 import apiRoute from "@/routes/api.route.js"
 import eggBoot from "@/boot/egg.boot.js"
+import feedBoot from "@/boot/feed.boot.js"
 
 //
 
@@ -11,6 +12,7 @@ const api = express()
 //
 
 await eggBoot.boot()
+await feedBoot.boot()
 
 //
 
