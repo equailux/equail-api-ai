@@ -14,10 +14,11 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
-		"@tensorflow/tfjs-node": "^4.22.0",
 		"cors": "^2.8.6",
 		"express": "^5.2.1",
 		"multer": "^2.0.2",
+		"onnxruntime-node": "^1.30.0",
+		"sharp": "^0.35.5",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
